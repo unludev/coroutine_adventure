@@ -66,7 +66,7 @@ interface Contributors: CoroutineScope {
                 }
             }
             CALLBACKS -> { // Using callbacks
-                loadContributorsCallbacks(service, req) { users ->
+                loadContributorsCallbacks(service, req) { users -> //Request3Callbakcs.kt icinde aciklandi
                     SwingUtilities.invokeLater {
                         updateResults(users, startTime)
                     }

@@ -5,6 +5,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
+import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicInteger
 
 fun loadContributorsCallbacks(service: GitHubService, req: RequestData, updateResults: (List<User>) -> Unit) {
@@ -12,16 +13,19 @@ fun loadContributorsCallbacks(service: GitHubService, req: RequestData, updateRe
         logRepos(req, responseRepos)
         val repos = responseRepos.bodyList()
         val allUsers = mutableListOf<User>()
+        val countDownLatch = CountDownLatch(repos.size) // repolarin sizeini tutar
         for (repo in repos) {
             service.getRepoContributorsCall(req.org, repo.name).onResponse { responseUsers ->
                 logUsers(repo, responseUsers)
                 val users = responseUsers.bodyList()
                 allUsers += users
+                countDownLatch.countDown() // bu size 0 olana kadar sayar
             }
         }
-        // TODO: Why this code doesn't work? How to fix that?
-        updateResults(allUsers.aggregate())
+        countDownLatch.await() // size in sifir olmasini bekler
+        updateResults(allUsers.aggregate()) // size sifir olunca ekrani gunceller
     }
+
 }
 
 inline fun <T> Call<T>.onResponse(crossinline callback: (Response<T>) -> Unit) {
