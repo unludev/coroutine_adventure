@@ -11,6 +11,7 @@ import contributors.*
  * çağrısı sırasında iş parçacığı askıya alınmış olur ve diğer görevleri yapmaya devam edebilir.
  *
  * Ayrica suspend fonksiyon yazgidimiz icin execute() fonksiyonu kullanmamiza gerek yoktur.
+ * Cunku bu kod Contributors.kt icinde launch icinde cagriliyor. Yani bir coroutine ile islem yapiliyor.
  * */
 suspend fun loadContributorsSuspend(service: GitHubService, req: RequestData): List<User> {
 
